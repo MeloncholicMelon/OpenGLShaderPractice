@@ -77,64 +77,78 @@ int main()
     glDeleteShader(vertexShader);
 
     // first Triangle
-    float vertices1[] = {
+    float vertices[] = {
          1.0f, 1.0f, 0.0f,
         -1.0f, 1.0f, 0.0f,
          0.0f, 0.0f, 0.0f,
-    };
 
-    // second Triangle
-    float vertices2[] = {
+         -1.0f, 1.0f, 0.0f,
+         -1.0, -1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f,
+
          1.0f, -1.0f, 0.0f,
         -1.0f, -1.0f, 0.0f,
          0.0f, 0.0f, 0.0f,
+
+         1.0f, 1.0f, 0.0f,
+         1.0, -1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f,
     };
 
-    unsigned int VBO1, VAO1;
-    glGenVertexArrays(1, &VAO1);
-    glGenBuffers(1, &VBO1);
 
-    glBindVertexArray(VAO1);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    unsigned int VBO2, VAO2;
-    glGenVertexArrays(1, &VAO2);
-    glGenBuffers(1, &VBO2);
-
-    glBindVertexArray(VAO2);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
     glEnableVertexAttribArray(0);
 
+
+    glUseProgram(shaderProgram);
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
     while (!glfwWindowShouldClose(window)) {
 
         glfwPollEvents();
-        glfwSwapBuffers(window);
 
-        glUseProgram(shaderProgram);
-
-        glBindVertexArray(VAO1);
         double  timeValue = glfwGetTime();
+
         float greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glBindVertexArray(VAO);
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glBindVertexArray(VAO2);
-        float redvalue = static_cast<float>(cos(timeValue) / 2.0 + 0.5);
-        glUniform4f(vertexColorLocation, redvalue, 0.0f, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        greenValue = static_cast<float>(cos(timeValue) / 2.0 + 0.5);
+        glBindVertexArray(VAO);
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
+
+
+        greenValue = static_cast<float>(-sin(timeValue) / 2.0 + 0.5);
+        glBindVertexArray(VAO);
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLES, 6, 3);
+
+
+        greenValue = static_cast<float>(-cos(timeValue) / 2.0 + 0.5);
+        glBindVertexArray(VAO);
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLES, 9, 3);
+
+
+   
+
+        glfwSwapBuffers(window);
+
 
 
     }
-    glDeleteVertexArrays(1, &VAO1);
-    glDeleteBuffers(1, &VBO1);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
     glfwTerminate();
     return 0;
