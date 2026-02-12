@@ -80,31 +80,43 @@ int main()
     float vertices[] = {
          1.0f, 1.0f, 0.0f,
         -1.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f,
 
          -1.0f, 1.0f, 0.0f,
          -1.0, -1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f,
 
          1.0f, -1.0f, 0.0f,
         -1.0f, -1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f,
 
          1.0f, 1.0f, 0.0f,
          1.0, -1.0f, 0.0f,
+
+         // center
          0.0f, 0.0f, 0.0f,
     };
 
+    unsigned int indices[]{
+        0,1,8,
+        2,3,8,
+        4,5,8,
+        6,7,8,
 
-    unsigned int VBO, VAO;
+    };
+
+    unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
 
     glBindVertexArray(VAO);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
 
@@ -116,31 +128,26 @@ int main()
 
         double  timeValue = glfwGetTime();
 
+
         float greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
         glBindVertexArray(VAO);
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-
         greenValue = static_cast<float>(cos(timeValue) / 2.0 + 0.5);
-        glBindVertexArray(VAO);
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 3, 3);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
 
 
-        greenValue = static_cast<float>(-sin(timeValue) / 2.0 + 0.5);
-        glBindVertexArray(VAO);
+        greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 6, 3);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(3 * sizeof(unsigned int)));
 
 
         greenValue = static_cast<float>(-cos(timeValue) / 2.0 + 0.5);
-        glBindVertexArray(VAO);
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 9, 3);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(6 * sizeof(unsigned int)));
 
-
-   
+        greenValue = static_cast<float>(-sin(timeValue) / 2.0 + 0.5);
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(9 * sizeof(unsigned int)));
 
         glfwSwapBuffers(window);
 
